@@ -1,0 +1,75 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+body{
+    background-color: lightgray;
+}
+.container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.todo-container{
+    width: 102%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding-top: 0.7rem;
+}
+.todo-value{
+    min-width: 600px;
+    height: 2rem;
+    background-color: rgb(164, 232, 232);
+    border-radius: 5px 0 5px 0;
+    border:solid 2px green;
+    color: rgb(238, 77, 19);
+    padding-left: 1rem;
+    font-size: 1.5rem;
+    outline: none;
+}
+.todo-delete{
+    min-width: 60px;
+    height: 2rem;
+    border-radius: 10px 0 0px 0;
+    background-color: rgb(84, 216, 84);
+    border:solid 2px green;
+    color: rgb(12, 12, 12);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 1.2rem;
+    font-weight:bolder ;
+    outline: none;   
+}
+h1{
+    color: green;
+    padding: 3rem;
+    font-size: 2rem;
+}
+input{
+    min-width: 600px;
+    height: 2.5rem;
+    border-radius: 10px 0 10px 0;
+    border:solid 2px rgb(37, 165, 37);
+    color: rgb(238, 93, 40);
+    padding-left: 1rem;
+    font-size: 1.2rem;
+    outline: none;
+}
+button{
+    min-width: 60px;
+    height: 2.3rem;
+    border-radius: 10px 0 0px 0;
+    background-color: rgb(84, 216, 84);
+    border:solid 2px green;
+    color: rgb(12, 12, 12);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-size: 1.2rem;
+    font-weight:bolder ;
+    outline: none;
+
+}
