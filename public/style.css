@@ -22,7 +22,7 @@ body{
 }
 .todo-value{
     min-width: 600px;
-    height: 2rem;
+    height: 13rem;
     background-color: rgb(164, 232, 232);
     border-radius: 5px 0 5px 0;
     border:solid 2px green;
@@ -30,6 +30,7 @@ body{
     padding-left: 1rem;
     font-size: 1.5rem;
     outline: none;
+    
 }
 .todo-delete{
     min-width: 60px;
@@ -43,6 +44,7 @@ body{
     font-size: 1.2rem;
     font-weight:bolder ;
     outline: none;   
+    text-decoration: none;
 }
 h1{
     color: green;

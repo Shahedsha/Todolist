@@ -2,14 +2,18 @@ const mongoose=require("mongoose");
 const bodyParser=require("body-parser")
 const express=require("express");
 const ChannelModel=require("./models/channel");
-
+const LocalStorage = require("node-localstorage").LocalStorage;
+localStorage = new LocalStorage("./scratch");
+const cookieparser = require('cookie-parser')
 const app=express();
-const PORT=305;
+const PORT=3050;
 
 app.set("view engine","ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended:true}))
+app.use(express.json())
 app.use(bodyParser.json())
+app.use(cookieparser())
 
 const dbUrl="mongodb+srv://Shahid:idiot@mongo.yv6djp0.mongodb.net/A_Todo?retryWrites=true&w=majority";
 const connectionParams={
@@ -22,23 +26,99 @@ mongoose
         console.info("connected to db");
     })
     .catch(()=>{
-        console.log("Errror:",e);
+        console.log("Errror:");
     });
 
-
+    const userSchema=mongoose.Schema(
+        {
+            name:String,
+            email:String,
+            password:String
+        }
+    )
+const User=mongoose.model("User",userSchema)
 
 app.listen(PORT,()=>{
         console.log(`Listening on PORT: ${PORT}`)
     })
 
-     app.get("/",(req,res)=>{
+     app.get("/", (req,res)=>{
+     
+        var user= req.cookies.Userstatus;
+        
         ChannelModel.find()
         .then(result=>{
-            res.render("index",{data:result});
+            console.log(user)
+            res.render("index",{data:result,data1:user});
         })
      })
-     
-    app.post("/",(req,res)=>{
+
+     app.get("/login",(req,res)=>{
+        res.render("login")
+     })
+     app.get("/logout",(req,res)=>{
+        var user = req.cookies.Userstatus;
+          localStorage.removeItem(user)
+          res.clearCookie("Userstatus");
+            res.redirect("/");
+    })
+
+
+
+     app.post("/login",(req,res)=>
+     {
+        const email=req.body.email
+        const password=req.body.password
+        User.findOne({email:req.body.email})
+            .then((result)=>{
+                if(result){
+                    if(password==result.password){
+                        const result1=result
+                        res.cookie("Userstatus",email)
+                        var user = req.cookies.Userstatus;
+                        localStorage.setItem(email,JSON.stringify(result));
+                        res.redirect('/')
+                        
+                    }
+                    else{
+                        res.json("Enter correct password")
+                    }
+                }
+                else{
+                    res.render("register")
+                }
+            })
+    })
+
+
+
+    app.get("/register",(req,res)=>{
+          
+        res.render("register");
+    })
+    app.post("/register",(req,res)=>
+    {
+        const name=req.body.name
+        const email=req.body.email
+        const password=req.body.password
+        User.findOne({ email:req.body.email})
+        .then((result)=>{
+        
+            if(result){
+              res.render("login",{data:result})
+            }
+            else{
+                  const user=new User()
+                  
+                  user.email=req.body.email;
+                  user.password=req.body.password;
+                  user.save()
+                  res.redirect("/login")
+              }
+            })
+        })
+
+        app.post("/",(req,res)=>{
         var channelModel=new ChannelModel()
         channelModel.todo=req.body.Todo;
         channelModel.save()
@@ -50,57 +130,44 @@ app.listen(PORT,()=>{
         })
     })
 
-    app.delete("/:id",(req,res)=>{
+    app.get("/delete/:id",(req,res)=>{
         ChannelModel.findByIdAndDelete(req.params.id)
-        .then((data)=>{
-            return res.status(200).send(data)
+        .then(()=>{
+            return res.redirect('/')
         })
         .catch((err)=>{
             return res.status(500).send(err)
         })
     })
     
-    // app.get("/insert",(req,res)=>{
-    //     var channelModel=new ChannelModel()
-    //     channelModel.name="SHAHID2"
-    //     channelModel.type="USER"
-    //     channelModel.save()
-    //     .then((data)=>{
-    //         res.status(200).send({"msg":"Inserted to db"})
-    //     })
-    //     .catch((err)=>{
-    //         console.log(err)
-    //     })
-    // })
+  
 
-    // app.get("/read",(req,res)=>{
-    //     ChannelModel.find()
-    //     .then((data)=>{
-    //         return res.status(200).send(data)
-    //     })
-    //     .catch((err)=>{
-    //         return res.status(500).send(err)
-    //     })
-        
-    // })
+    app.get("/update/:id",(req,res)=>{
+        ChannelModel.findById(req.params.id)
+        .then((result)=>{
+            res.render("update",data=result)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    })
+    
+    app.post("/update/todo/:id",(req,res)=>{
+        const a=req.body.Todo;
+         ChannelModel.findByIdAndUpdate(req.params.id,{todo:a})
 
-    // app.get("/update",(req,res)=>{
-    //     ChannelModel.findByIdAndUpdate(req.query.id,{type:req.query.type})
-    //     .then((data)=>{
-    //         return res.status(200).send(data)
-    //     })
-    //     .catch((err)=>{
-    //         return res.status(500).send(err)
-    //     })
-        
-    // })
+        .then(()=>{
+            res.redirect("/");
+        })
+        .catch((err)=>console.log(err));
+    
+    
+    })
 
-    // app.get("/delete",(req,res)=>{
-    //     ChannelModel.findOneAndRemove({type:req.query.type})
-    //     .then((data)=>{
-    //         return res.status(200).send(data)
-    //     })
-    //     .catch((err)=>{
-    //         return res.status(500).send(err)
-    //     })
-    // })
+
+    
+
+
+
+
+

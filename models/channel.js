@@ -4,7 +4,6 @@ const channelSchema = new mongoose.Schema({
     todo:   {
         type:String,
         required:true,
-        trim:true,
     }
 });
 
